@@ -150,7 +150,7 @@ class UI(QMainWindow):
                 ports = str(ports)
                 # print("TTTT",ports)
             # if ports.find("uart") ==False :
-        self.serial = serial.Serial(str(self.serial.currentText()),
+        self.serial = serial.Serial(str(self.listPort.currentText()),
                                 baudrate=9600, 
                                 parity=serial.PARITY_NONE,
                                 stopbits=serial.STOPBITS_ONE,
@@ -173,4 +173,4 @@ class UI(QMainWindow):
 app = QApplication(sys.argv)
 window = UI()
 window.show()
-app.exec_()
+sys.exit(app.exec_())
