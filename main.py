@@ -173,4 +173,4 @@ class UI(QMainWindow):
 app = QApplication(sys.argv)
 window = UI()
 window.show()
-app.exec_()
+sys.exit(app.exec_())
