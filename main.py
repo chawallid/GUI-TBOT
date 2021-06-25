@@ -188,7 +188,7 @@ class UI(QMainWindow):
         self.is_open = self.serial.isOpen()
         if self.is_open:
             self.toggleconnect = False
-            pixmap = QPixmap('../img/disconnect_template.png')
+            pixmap = QPixmap('./img/disconnect_template.png')
             self.btnConnect.setPixmap(pixmap)
             self.listPort.setEnabled(False)
         else:
@@ -196,7 +196,7 @@ class UI(QMainWindow):
             self.is_open = self.serial.isOpen() 
             self.toggleconnect = True
             self.listPort.setEnabled(True)
-            pixmap = QPixmap('../img/connect.png')
+            pixmap = QPixmap('./img/connect.png')
             self.btnConnect.setPixmap(pixmap)
 
 app = QApplication(sys.argv)
