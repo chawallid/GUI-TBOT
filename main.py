@@ -52,7 +52,7 @@ class UI(QMainWindow):
         for p in self.tmp : print(p)
 
         self.btnConnect = self.findChild(QLabel, 'btnconnect') # Find the btnconnect
-        self.btnConnect.clicked.connect(self.test) 
+        self.btnConnect.clicked.connect(self.connectPort) 
 
         self.btnHome = self.findChild(QLabel, 'btnHome') # Find the Image J+
         self.btnHome.clicked.connect(partial(self.sendDataHome,data = "HOME")) 
