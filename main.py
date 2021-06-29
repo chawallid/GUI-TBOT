@@ -183,12 +183,13 @@ class UI(QMainWindow):
         self.speed = self.slider.value()
     
     def sendPlayback(self,dataList):
-        # if self.is_open:
-        if len(dataList) == 7:
-            data = "playback,"+str(dataList[0])+","+str(dataList[1])+","+str(dataList[2])+","+str(dataList[3])+","+str(dataList[4])+","+str(dataList[5])+","+str(self.speed)+","+str(dataList[6])+",\r"
-        print("Send Playback Command :", str(data.encode()))
-            # self.serial.write(data.encode())
+        if self.is_open:
+            if len(dataList) == 7:
+                data = "playback,"+str(dataList[0])+","+str(dataList[1])+","+str(dataList[2])+","+str(dataList[3])+","+str(dataList[4])+","+str(dataList[5])+","+str(self.speed)+","+str(dataList[6])+",\r"
+            print("Send Playback Command :", str(data.encode()))
+            self.serial.write(data.encode())
         time.sleep(0.1)
+
 
     def sendData(self,data):
         if self.is_open:
