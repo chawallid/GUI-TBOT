@@ -158,6 +158,17 @@ class UI(QMainWindow):
         print("TEST")
 
     def update(self):
+        if self.is_open:
+            line = str(self.serial.readline(self.serial.in_waiting).decode())
+            line = line.split(",")
+            if(line[0] == 'FeedBack'):
+                self.X.setText(line[1])
+                self.Y.setText(line[2])
+                self.Z.setText(line[3])
+                self.J1.setText(line[4])
+                self.J2.setText(line[5])
+                self.J3.setText(line[6])
+
         if not(self.toggleconnect):
             self.listPort.clear()
             if sys.platform.startswith('win'):
