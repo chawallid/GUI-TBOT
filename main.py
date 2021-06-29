@@ -27,7 +27,6 @@ class UI(QMainWindow):
     def __init__(self):
         super(UI, self).__init__()
         uic.loadUi("mainUI.ui", self)
-
         self.refresh = QTimer()
         self.refresh.setInterval(100)
         self.refresh.timeout.connect(self.update)
@@ -38,8 +37,6 @@ class UI(QMainWindow):
         self.speed = 50 
         self.listPort = self.findChild(QComboBox, 'port') # Find Portlist
         self.toggleconnect = True
-        self.listPlayback = ["",0,0,0,0,0,0,0,0]
-        self.checkStep = False
 
         if sys.platform.startswith('win'):
             ports = ['COM%s' % (i + 1) for i in range(256)]
@@ -59,22 +56,22 @@ class UI(QMainWindow):
         self.btnConnect.clicked.connect(self.connectPort) 
 
         self.X = self.findChild(QLineEdit, 'X_value')
-        self.X.setText("0")
+        self.X.setText("15")
         self.Y = self.findChild(QLineEdit, 'Y_value')
-        self.Y.setText("0")
+        self.Y.setText("15")
         self.Z = self.findChild(QLineEdit, 'Z_value')
-        self.Z.setText("0")
+        self.Z.setText("15")
         self.R = self.findChild(QLineEdit, 'R_value')
-        self.R.setText("0")
+        self.R.setText("15")
 
         self.J1 = self.findChild(QLineEdit, 'J1_value')
-        self.J1.setText("0")
+        self.J1.setText("15")
         self.J2 = self.findChild(QLineEdit, 'J2_value')
-        self.J2.setText("0")
+        self.J2.setText("15")
         self.J3 = self.findChild(QLineEdit, 'J3_value')
-        self.J3.setText("0")
+        self.J3.setText("15")
         self.J4 = self.findChild(QLineEdit, 'J4_value')
-        self.J4.setText("0")
+        self.J4.setText("15")
 
         self.btnHome = self.findChild(QLabel, 'btnHome') # Find the Image J+
         self.btnHome.clicked.connect(partial(self.sendDataHome,data = "HOME")) 
@@ -121,16 +118,6 @@ class UI(QMainWindow):
         self.slider = self.findChild(QSlider, 'speed')
         self.slider.valueChanged.connect(self.value_changed)
 
-        self.insertRow = self.findChild(QLabel, 'insertRow')
-        self.insertRow.clicked.connect(self.insertTable)
-
-        self.play = self.findChild(QLabel, 'play')
-        self.play.clicked.connect(self.runPlayback) 
-
-        self.pause = self.findChild(QLabel, 'pause')
-        self.pause.clicked.connect(self.pausePlayback) 
-
-        self.deleteRow = self.findChild(QLabel, 'deleteRow')
 
         self.joy1 = self.findChild(QGroupBox, 'JOY1') # Find the Image J+
         self.joy1.setStyleSheet("QGroupBox {border-image: url(./img/GG_2.png);} ")
@@ -146,60 +133,22 @@ class UI(QMainWindow):
 
         self.slider.setValue(50)
 
-        self.table = self.findChild(QTableWidget, 'tableWidget')
-        # self.table.clear()
-        self.table.setRowCount(0)
-    def runPlayback(self):
-        print("runPlayback")
-        rowCount = self.table.rowCount()
-        count = 0
-        while True:
-            if(rowCount >0):
-                # print(self.table.item(count,1).text(),self.table.item(count,2).text(),self.table.item(count,3).text(),self.table.item(count,4).text(),self.table.item(count,5).text(),self.table.item(count,6).text(),self.table.item(count,7).text(),self.table.item(count,8).text(),count+1)
-                # if self.checkStep:
-                data = [self.table.item(count,1).text(),self.table.item(count,2).text(),self.table.item(count,3).text(),self.table.item(count,5).text(),self.table.item(count,6).text(),self.table.item(count,7).text(),str(count+1)]
-                self.sendPlayback(data)
-                count += 1
-                if count == rowCount:
-                    break
-
-    def pausePlayback(self):
-        print("pausePlayback")
-        pass
-
-    def insertTable(self):
-        rowCount = self.table.rowCount()
-        self.table.insertRow(rowCount)
-        # self.listPlayback = [0,0,0,0,0,0,0,0]
-        for i in range(len(self.listPlayback)):
-            self.table.setItem(rowCount,i, QTableWidgetItem(str(self.listPlayback[i])))
-
-        pass
-
     def keyPressEvent(self, event):
         print("press")
         # return super().keyPressEvent(a0)
     def value_changed(self):
         self.speed = self.slider.value()
-    
-    def sendPlayback(self,dataList):
-        # if self.is_open:
-        if len(dataList) == 7:
-            data = "playback,"+str(dataList[0])+","+str(dataList[1])+","+str(dataList[2])+","+str(dataList[3])+","+str(dataList[4])+","+str(dataList[5])+","+str(self.speed)+","+str(dataList[6])+",\r"
-        print("Send Playback Command :", str(data.encode()))
-            # self.serial.write(data.encode())
-        time.sleep(0.1)
 
     def sendData(self,data):
         if self.is_open:
-            data = "control"+str(data)+","+str(self.speed) +",\r"
+            data = str(data)+","+str(self.speed) +",\r"
             print("Send Data Command :", str(data.encode()))
             self.serial.write(data.encode())
         time.sleep(0.1)
         
     def sendDataHome(self,data):
         if self.is_open:
-            data = "control"+str(data)+",\r"
+            data = str(data)+",\r"
             print("Send Data Command :", str(data.encode()))
             self.serial.write(data.encode())
         time.sleep(0.1)
@@ -211,23 +160,13 @@ class UI(QMainWindow):
         if self.is_open:
             line = str(self.serial.readline(self.serial.in_waiting).decode())
             line = line.split(",")
-            if(line[0] == 'feedback' and line[-1] == '\r'):
+            if(line[0] == 'feedback'):
                 self.X.setText(line[1])
                 self.Y.setText(line[2])
                 self.Z.setText(line[3])
                 self.J1.setText(line[4])
                 self.J2.setText(line[5])
                 self.J3.setText(line[6])
-                self.listPlayback[1] = line[1]
-                self.listPlayback[2] = line[2]
-                self.listPlayback[3] = line[3]
-                self.listPlayback[5] = line[4]
-                self.listPlayback[6] = line[5]
-                self.listPlayback[7] = line[6]
-                if(line[7]=='succes'):
-                    self.checkStep = True
-                else:
-                    self.checkStep = False
 
         if not(self.toggleconnect):
             self.listPort.clear()
@@ -249,6 +188,8 @@ class UI(QMainWindow):
         if self.toggleconnect:
             for ports in self.tmp:
                 ports = str(ports)
+                # print("TTTT",ports)
+            # if ports.find("uart") ==False :
         self.serial = serial.Serial(str(self.listPort.currentText()),
                                 baudrate=115200, 
                                 parity=serial.PARITY_NONE,
@@ -260,11 +201,10 @@ class UI(QMainWindow):
             self.toggleconnect = False
             pixmap = QPixmap('./img/disconnect_template.png')
             self.btnConnect.setPixmap(pixmap)
-            self.listPort.currentText(str(self.listPort.currentText()))
             self.listPort.setEnabled(False)
         else:
             self.serial.close()
-            self.is_open = False
+            self.is_open = self.serial.isOpen() 
             self.toggleconnect = True
             self.listPort.setEnabled(True)
             pixmap = QPixmap('./img/connect.png')
