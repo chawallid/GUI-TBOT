@@ -151,7 +151,7 @@ class UI(QMainWindow):
                 # print("TTTT",ports)
             # if ports.find("uart") ==False :
         self.serial = serial.Serial(str(self.listPort.currentText()),
-                                baudrate=9600, 
+                                baudrate=115200, 
                                 parity=serial.PARITY_NONE,
                                 stopbits=serial.STOPBITS_ONE,
                                 bytesize=serial.EIGHTBITS,
@@ -159,7 +159,7 @@ class UI(QMainWindow):
         self.is_open = self.serial.isOpen()
         if self.is_open:
             self.toggleconnect = False
-            pixmap = QPixmap('../img/disconnect_template.png')
+            pixmap = QPixmap('img/disconnect_template.png')
             self.btnConnect.setPixmap(pixmap)
             self.listPort.setEnabled(False)
         else:
@@ -167,7 +167,7 @@ class UI(QMainWindow):
             self.is_open = self.serial.isOpen() 
             self.toggleconnect = True
             self.listPort.setEnabled(True)
-            pixmap = QPixmap('../img/connect.png')
+            pixmap = QPixmap('img/connect.png')
             self.btnConnect.setPixmap(pixmap)
 
 app = QApplication(sys.argv)
