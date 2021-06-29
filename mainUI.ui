@@ -1317,7 +1317,7 @@
                 <number>-1</number>
                </property>
                <item>
-                <widget class="QGroupBox" name="JOY1_4">
+                <widget class="QGroupBox" name="JOY3">
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
@@ -1380,7 +1380,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>img/point_control2_J1+.png</pixmap>
+                     <pixmap>img/point_controlX+.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1411,7 +1411,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>img/point_control2_J2-.png</pixmap>
+                     <pixmap>img/point_controlY+.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1445,7 +1445,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>img/point_control2_J1-.png</pixmap>
+                     <pixmap>img/point_controlX-.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1476,7 +1476,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>img/point_control2_J2+.png</pixmap>
+                     <pixmap>img/point_controlY-.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1490,7 +1490,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="JOY2_4">
+                <widget class="QGroupBox" name="JOY4">
                  <layout class="QGridLayout" name="gridLayout_12">
                   <property name="spacing">
                    <number>0</number>
@@ -1510,7 +1510,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>img/point_control2_J3+.png</pixmap>
+                     <pixmap>img/point_controlZ+.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1535,7 +1535,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>img/point_control2_J4+.png</pixmap>
+                     <pixmap>img/point_controlR-.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1560,7 +1560,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>img/point_control2_J4-.png</pixmap>
+                     <pixmap>img/point_controlR+.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>
@@ -1607,7 +1607,7 @@
                      <string/>
                     </property>
                     <property name="pixmap">
-                     <pixmap>img/point_control2_J3-.png</pixmap>
+                     <pixmap>img/point_controlZ-.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>

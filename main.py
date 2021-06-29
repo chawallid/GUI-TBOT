@@ -54,6 +54,24 @@ class UI(QMainWindow):
         self.btnConnect = self.findChild(QLabel, 'btnconnect') # Find the btnconnect
         self.btnConnect.clicked.connect(self.connectPort) 
 
+        self.X = self.findChild(QLineEdit, 'X_value')
+        self.X.setText("15")
+        self.Y = self.findChild(QLineEdit, 'Y_value')
+        self.Y.setText("15")
+        self.Z = self.findChild(QLineEdit, 'Z_value')
+        self.Z.setText("15")
+        self.R = self.findChild(QLineEdit, 'R_value')
+        self.R.setText("15")
+
+        self.J1 = self.findChild(QLineEdit, 'J1_value')
+        self.J1.setText("15")
+        self.J2 = self.findChild(QLineEdit, 'J2_value')
+        self.J2.setText("15")
+        self.J3 = self.findChild(QLineEdit, 'J3_value')
+        self.J3.setText("15")
+        self.J4 = self.findChild(QLineEdit, 'J4_value')
+        self.J4.setText("15")
+
         self.btnHome = self.findChild(QLabel, 'btnHome') # Find the Image J+
         self.btnHome.clicked.connect(partial(self.sendDataHome,data = "HOME")) 
         self.btnHome.released.connect(partial(self.sendDataHome,data = "STOP")) 
@@ -101,13 +119,21 @@ class UI(QMainWindow):
 
 
         self.joy1 = self.findChild(QGroupBox, 'JOY1') # Find the Image J+
-        self.joy1.setStyleSheet("QGroupBox {border-image: url(img/GG_2.png);} ")
+        self.joy1.setStyleSheet("QGroupBox {border-image: url(./img/GG_2.png);} ")
 
         self.joy2 = self.findChild(QGroupBox, 'JOY2') # Find the Image J+
-        self.joy2.setStyleSheet("QGroupBox {border-image: url(img/GG_2.png);} ")
+        self.joy2.setStyleSheet("QGroupBox {border-image: url(./img/GG_2.png);} ")
+
+        self.joy3 = self.findChild(QGroupBox, 'JOY3') # Find the Image J+
+        self.joy3.setStyleSheet("QGroupBox {border-image: url(./img/GG_2.png);} ")
+
+        self.joy4 = self.findChild(QGroupBox, 'JOY4') # Find the Image J+
+        self.joy4.setStyleSheet("QGroupBox {border-image: url(./img/GG_2.png);} ")
 
         self.slider.setValue(50)
+
     def keyPressEvent(self, event):
+        if()
         print("press")
         # return super().keyPressEvent(a0)
     def value_changed(self):
@@ -119,14 +145,17 @@ class UI(QMainWindow):
             print("Send Data Command :", str(data.encode()))
             self.serial.write(data.encode())
         time.sleep(0.1)
+        
     def sendDataHome(self,data):
         if self.is_open:
             data = str(data)+",\r"
             print("Send Data Command :", str(data.encode()))
             self.serial.write(data.encode())
         time.sleep(0.1)
+
     def test(self):
         print("TEST")
+
     def update(self):
         if not(self.toggleconnect):
             self.listPort.clear()
@@ -151,7 +180,7 @@ class UI(QMainWindow):
                 # print("TTTT",ports)
             # if ports.find("uart") ==False :
         self.serial = serial.Serial(str(self.listPort.currentText()),
-                                baudrate=115200, 
+                                baudrate=9600, 
                                 parity=serial.PARITY_NONE,
                                 stopbits=serial.STOPBITS_ONE,
                                 bytesize=serial.EIGHTBITS,
@@ -159,7 +188,7 @@ class UI(QMainWindow):
         self.is_open = self.serial.isOpen()
         if self.is_open:
             self.toggleconnect = False
-            pixmap = QPixmap('img/disconnect_template.png')
+            pixmap = QPixmap('./img/disconnect_template.png')
             self.btnConnect.setPixmap(pixmap)
             self.listPort.setEnabled(False)
         else:
@@ -167,7 +196,7 @@ class UI(QMainWindow):
             self.is_open = self.serial.isOpen() 
             self.toggleconnect = True
             self.listPort.setEnabled(True)
-            pixmap = QPixmap('img/connect.png')
+            pixmap = QPixmap('./img/connect.png')
             self.btnConnect.setPixmap(pixmap)
 
 app = QApplication(sys.argv)
