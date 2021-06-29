@@ -133,7 +133,6 @@ class UI(QMainWindow):
         self.slider.setValue(50)
 
     def keyPressEvent(self, event):
-        if()
         print("press")
         # return super().keyPressEvent(a0)
     def value_changed(self):
