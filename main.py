@@ -14,6 +14,7 @@ import time
 import glob
 
 class QLabel_alterada(QLabel):
+    
     clicked=pyqtSignal()
     released=pyqtSignal()
     def mousePressEvent(self, ev):
