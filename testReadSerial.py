@@ -12,7 +12,7 @@ ser = serial.Serial(
     timeout= 1)
 print(ser.name)
 while True:
-    line = str(ser.readline(ser.in_waiting).decode())
+    line = str(ser.readline(ser.in_waiting))
     print(line.split(","))
     time.sleep(0.5)
 
