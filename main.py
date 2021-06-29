@@ -27,7 +27,6 @@ class UI(QMainWindow):
     def __init__(self):
         super(UI, self).__init__()
         uic.loadUi("mainUI.ui", self)
-
         self.refresh = QTimer()
         self.refresh.setInterval(100)
         self.refresh.timeout.connect(self.update)
