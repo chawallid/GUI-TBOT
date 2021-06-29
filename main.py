@@ -161,7 +161,7 @@ class UI(QMainWindow):
         if self.is_open:
             line = str(self.serial.readline(self.serial.in_waiting).decode())
             line = line.split(",")
-            if(line[0] == 'FeedBack'):
+            if(line[0] == 'feedback'):
                 self.X.setText(line[1])
                 self.Y.setText(line[2])
                 self.Z.setText(line[3])
