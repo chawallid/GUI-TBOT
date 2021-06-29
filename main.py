@@ -22,7 +22,7 @@ class QLabel_alterada(QLabel):
         self.released.emit()
 
 class UI(QMainWindow):
-    
+
     def __init__(self):
         super(UI, self).__init__()
         uic.loadUi("mainUI.ui", self)
@@ -181,7 +181,7 @@ class UI(QMainWindow):
                 # print("TTTT",ports)
             # if ports.find("uart") ==False :
         self.serial = serial.Serial(str(self.listPort.currentText()),
-                                baudrate=9600, 
+                                baudrate=115200, 
                                 parity=serial.PARITY_NONE,
                                 stopbits=serial.STOPBITS_ONE,
                                 bytesize=serial.EIGHTBITS,
