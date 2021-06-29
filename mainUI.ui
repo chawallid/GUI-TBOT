@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1661</width>
-    <height>1127</height>
+    <width>1121</width>
+    <height>1012</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -410,11 +410,52 @@
              </property>
              <property name="sizeHint" stdset="0">
               <size>
-               <width>40</width>
-               <height>20</height>
+               <width>20</width>
+               <height>10</height>
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QLabel_alterada" name="play">
+             <property name="maximumSize">
+              <size>
+               <width>40</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="lineWidth">
+              <number>0</number>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap>img/point_control.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel_alterada" name="pause">
+             <property name="maximumSize">
+              <size>
+               <width>40</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap>img/pause.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -470,7 +511,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_15">
+              <widget class="QLabel_alterada" name="insertRow">
                <property name="maximumSize">
                 <size>
                  <width>35</width>
@@ -489,7 +530,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_16">
+              <widget class="QLabel_alterada" name="deleteRow">
                <property name="maximumSize">
                 <size>
                  <width>35</width>
@@ -583,7 +624,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>1291</width>
-                <height>821</height>
+                <height>717</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
@@ -810,7 +851,7 @@
                  </column>
                  <column>
                   <property name="text">
-                   <string>x</string>
+                   <string>X</string>
                   </property>
                   <property name="font">
                    <font>
@@ -824,7 +865,7 @@
                  </column>
                  <column>
                   <property name="text">
-                   <string>y</string>
+                   <string>Y</string>
                   </property>
                   <property name="font">
                    <font>
@@ -838,7 +879,7 @@
                  </column>
                  <column>
                   <property name="text">
-                   <string>z</string>
+                   <string>Z</string>
                   </property>
                   <property name="font">
                    <font>
@@ -852,7 +893,7 @@
                  </column>
                  <column>
                   <property name="text">
-                   <string>r</string>
+                   <string>R</string>
                   </property>
                   <property name="font">
                    <font>
@@ -867,52 +908,67 @@
                  </column>
                  <column>
                   <property name="text">
-                   <string/>
+                   <string>J1</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                  <property name="foreground">
+                   <brush brushstyle="SolidPattern">
+                    <color alpha="255">
+                     <red>0</red>
+                     <green>0</green>
+                     <blue>0</blue>
+                    </color>
+                   </brush>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string/>
+                   <string>J2</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string/>
+                   <string>J3</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
                   </property>
                  </column>
                  <column>
                   <property name="text">
-                   <string/>
+                   <string>J4</string>
                   </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string/>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </column>
-                 <column>
-                  <property name="text">
-                   <string/>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
                   </property>
                  </column>
                 </widget>
