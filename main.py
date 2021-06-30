@@ -13,6 +13,9 @@ import sys
 import time
 import glob
 
+clickStop = False
+
+
 class QLabel_alterada(QLabel):
     
     clicked=pyqtSignal()
@@ -32,6 +35,17 @@ class UI(QMainWindow):
         self.refresh.setInterval(100)
         self.refresh.timeout.connect(self.update)
         self.refresh.start()
+
+        # self.thread = QThread()
+        # self.worker = Worker()
+        # self.worker.moveToThread(self.thread)
+        # self.thread.started.connect(self.worker.run)
+        # self.worker.finished.connect(self.thread.quit)
+        # self.worker.finished.connect(self.worker.deleteLater)
+        # self.thread.finished.connect(self.thread.deleteLater)
+
+
+
 
         self.serial = None
         self.is_open = False
@@ -118,6 +132,41 @@ class UI(QMainWindow):
         self.J4_Down.clicked.connect(partial(self.sendData,data = "J4-")) 
         self.J4_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
 
+        self.X_Up = self.findChild(QLabel, 'X_Up') # Find the Image  X
+        self.X_Up.clicked.connect(partial(self.sendData,data = "X+")) 
+        self.X_Up.released.connect(partial(self.sendDataHome,data = "STOP")) 
+
+        self.X_Down = self.findChild(QLabel, 'X_Down') # Find the Image  X
+        self.X_Down.clicked.connect(partial(self.sendData,data = "X-")) 
+        self.X_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
+
+        self.Y_Up = self.findChild(QLabel, 'Y_Up') # Find the Image  Y
+        self.Y_Up.clicked.connect(partial(self.sendData,data = "Y+")) 
+        self.Y_Up.released.connect(partial(self.sendDataHome,data = "STOP")) 
+
+        self.Y_Down = self.findChild(QLabel, 'Y_Down') # Find the Image  Y
+        self.Y_Down.clicked.connect(partial(self.sendData,data = "Y-")) 
+        self.Y_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
+
+        self.Z_Up = self.findChild(QLabel, 'Z_Up') # Find the Image  Z
+        self.Z_Up.clicked.connect(partial(self.sendData,data = "Z+")) 
+        self.Z_Up.released.connect(partial(self.sendDataHome,data = "STOP")) 
+
+        self.Z_Down = self.findChild(QLabel, 'Z_Down') # Find the Image  Z
+        self.Z_Down.clicked.connect(partial(self.sendData,data = "Z-")) 
+        self.Z_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
+
+
+        self.R_Up = self.findChild(QLabel, 'R_Up') # Find the Image  R
+        self.R_Up.clicked.connect(partial(self.sendData,data = "R+")) 
+        self.R_Up.released.connect(partial(self.sendDataHome,data = "STOP")) 
+
+        self.R_Down = self.findChild(QLabel, 'R_Down') # Find the Image  R
+        self.R_Down.clicked.connect(partial(self.sendData,data = "R-")) 
+        self.R_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
+
+
+
         self.slider = self.findChild(QSlider, 'speed')
         self.slider.valueChanged.connect(self.value_changed)
 
@@ -125,10 +174,11 @@ class UI(QMainWindow):
         self.insertRow.clicked.connect(self.insertTable)
 
         self.play = self.findChild(QLabel, 'play')
-        self.play.clicked.connect(self.runPlayback) 
+        
+        # self.play.clicked.connect(self.clickRun) 
 
         self.pause = self.findChild(QLabel, 'pause')
-        self.pause.clicked.connect(self.pausePlayback) 
+        # self.pause.clicked.connect(self.clickPause) 
 
         self.deleteRow = self.findChild(QLabel, 'deleteRow')
 
@@ -149,19 +199,46 @@ class UI(QMainWindow):
         self.table = self.findChild(QTableWidget, 'tableWidget')
         # self.table.clear()
         self.table.setRowCount(0)
+    def clickRun(self):
+        print("runTable")
+        self.thread.start()
+    def clickPause(self):
+        print("pauseTable")
+        self.thread.quit()
+
     def runPlayback(self):
         print("runPlayback")
         rowCount = self.table.rowCount()
         count = 0
         while True:
+            if self.is_open:
+                line = str(self.serial.readline(self.serial.in_waiting).decode())
+                line = line.split(",")
+                if(line[0] == 'feedback' and line[-1] == '\r'):
+                    self.X.setText(line[1])
+                    self.Y.setText(line[2])
+                    self.Z.setText(line[3])
+                    self.J1.setText(line[4])
+                    self.J2.setText(line[5])
+                    self.J3.setText(line[6])
+                    self.listPlayback[1] = line[1]
+                    self.listPlayback[2] = line[2]
+                    self.listPlayback[3] = line[3]
+                    self.listPlayback[5] = line[4]
+                    self.listPlayback[6] = line[5]
+                    self.listPlayback[7] = line[6]
+                    if(line[7]=='success'):
+                        self.checkStep = True
             if(rowCount >0):
                 # print(self.table.item(count,1).text(),self.table.item(count,2).text(),self.table.item(count,3).text(),self.table.item(count,4).text(),self.table.item(count,5).text(),self.table.item(count,6).text(),self.table.item(count,7).text(),self.table.item(count,8).text(),count+1)
-                # if self.checkStep:
-                data = [self.table.item(count,1).text(),self.table.item(count,2).text(),self.table.item(count,3).text(),self.table.item(count,5).text(),self.table.item(count,6).text(),self.table.item(count,7).text(),str(count+1)]
-                self.sendPlayback(data)
-                count += 1
+                if self.checkStep:
+                    data = [self.table.item(count,1).text(),self.table.item(count,2).text(),self.table.item(count,3).text(),self.table.item(count,5).text(),self.table.item(count,6).text(),self.table.item(count,7).text(),str(count+1)]
+                    self.sendPlayback(data)
+                    self.checkStep = False
+                    count += 1
                 if count == rowCount:
                     break
+            time.sleep(0.5)
 
     def pausePlayback(self):
         print("pausePlayback")
@@ -193,14 +270,14 @@ class UI(QMainWindow):
 
     def sendData(self,data):
         if self.is_open:
-            data = "control"+str(data)+","+str(self.speed) +",\r"
+            data = "control,"+str(data)+","+str(self.speed) +",\r"
             print("Send Data Command :", str(data.encode()))
             self.serial.write(data.encode())
         time.sleep(0.1)
         
     def sendDataHome(self,data):
         if self.is_open:
-            data = "control"+str(data)+",\r"
+            data = "control,"+str(data)+",\r"
             print("Send Data Command :", str(data.encode()))
             self.serial.write(data.encode())
         time.sleep(0.1)
@@ -225,10 +302,9 @@ class UI(QMainWindow):
                 self.listPlayback[5] = line[4]
                 self.listPlayback[6] = line[5]
                 self.listPlayback[7] = line[6]
-                if(line[7]=='succes'):
+                if(line[7]=='success'):
                     self.checkStep = True
-                else:
-                    self.checkStep = False
+                
 
         if not(self.toggleconnect):
             self.listPort.clear()
@@ -250,13 +326,13 @@ class UI(QMainWindow):
         if self.toggleconnect:
             for ports in self.tmp:
                 ports = str(ports)
-        self.serial = serial.Serial(str(self.listPort.currentText()),
-                                baudrate=115200, 
-                                parity=serial.PARITY_NONE,
-                                stopbits=serial.STOPBITS_ONE,
-                                bytesize=serial.EIGHTBITS,
-                                timeout=1)
-        self.is_open = self.serial.isOpen()
+            self.serial = serial.Serial(str(self.listPort.currentText()),
+                                    baudrate=115200, 
+                                    parity=serial.PARITY_NONE,
+                                    stopbits=serial.STOPBITS_ONE,
+                                    bytesize=serial.EIGHTBITS,
+                                    timeout=1)
+            self.is_open = self.serial.isOpen()
         if self.is_open:
             self.toggleconnect = False
             pixmap = QPixmap('./img/disconnect_template.png')

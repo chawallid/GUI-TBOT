@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1121</width>
-    <height>1012</height>
+    <width>1920</width>
+    <height>1052</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -624,7 +624,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>1291</width>
-                <height>717</height>
+                <height>757</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
@@ -1416,7 +1416,7 @@
                    </widget>
                   </item>
                   <item row="0" column="1">
-                   <widget class="QLabel_alterada" name="J1_Up_4">
+                   <widget class="QLabel_alterada" name="X_Up">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
                       <horstretch>0</horstretch>
@@ -1447,7 +1447,7 @@
                    </widget>
                   </item>
                   <item row="1" column="0">
-                   <widget class="QLabel_alterada" name="J2_Down_4">
+                   <widget class="QLabel_alterada" name="Y_Up">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
                       <horstretch>0</horstretch>
@@ -1481,7 +1481,7 @@
                    </widget>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QLabel_alterada" name="J1_Down_4">
+                   <widget class="QLabel_alterada" name="X_Down">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
                       <horstretch>0</horstretch>
@@ -1512,7 +1512,7 @@
                    </widget>
                   </item>
                   <item row="1" column="2">
-                   <widget class="QLabel_alterada" name="J2_Up_4">
+                   <widget class="QLabel_alterada" name="Y_Down">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -1552,7 +1552,7 @@
                    <number>0</number>
                   </property>
                   <item row="0" column="1">
-                   <widget class="QLabel_alterada" name="J3_Up_4">
+                   <widget class="QLabel_alterada" name="Z_Up">
                     <property name="maximumSize">
                      <size>
                       <width>70</width>
@@ -1577,7 +1577,7 @@
                    </widget>
                   </item>
                   <item row="1" column="2">
-                   <widget class="QLabel_alterada" name="J4_Up_4">
+                   <widget class="QLabel_alterada" name="R_Down">
                     <property name="maximumSize">
                      <size>
                       <width>70</width>
@@ -1602,7 +1602,7 @@
                    </widget>
                   </item>
                   <item row="1" column="0">
-                   <widget class="QLabel_alterada" name="J4_Down_4">
+                   <widget class="QLabel_alterada" name="R_Up">
                     <property name="maximumSize">
                      <size>
                       <width>70</width>
@@ -1649,7 +1649,7 @@
                    </widget>
                   </item>
                   <item row="2" column="1">
-                   <widget class="QLabel_alterada" name="J3_Down_4">
+                   <widget class="QLabel_alterada" name="Z_Down">
                     <property name="maximumSize">
                      <size>
                       <width>70</width>
