@@ -58,15 +58,6 @@ class UI(QMainWindow):
         self.refresh.timeout.connect(self.update)
         self.refresh.start()
 
-        # self.thread = QThread()
-        # self.runPlayBackThread = RunPlayBackThread()
-        # self.runPlayBackThread.moveToThread(self.thread)
-        # self.thread.started.connect(self.runPlayBackThread.run)
-        # self.runPlayBackThread.progress.connect(self.reportProgress)
-        # self.runPlayBackThread.finished.connect(self.thread.quit)
-        # self.worker.finished.connect(self.worker.deleteLater)
-        # self.thread.finished.connect(self.thread.deleteLater)
-
         self.serial = None
         self.is_open = False
         self.speed = 50 
@@ -77,6 +68,7 @@ class UI(QMainWindow):
         self.updateData = False
         self.runPlaybackCount  = False 
         self.lastRow = False
+        self.countLoop = 0
 
 
         if sys.platform.startswith('win'):
@@ -189,6 +181,10 @@ class UI(QMainWindow):
         self.slider = self.findChild(QSlider, 'speed')
         self.slider.valueChanged.connect(self.value_changed)
 
+        self.Loop = self.findChild(QLineEdit, 'valueLoop')
+        self.Loop.setText("1")
+        # QLineEdit
+
         self.insertRow = self.findChild(QLabel, 'insertRow')
         self.insertRow.clicked.connect(self.insertTable)
 
@@ -280,11 +276,11 @@ class UI(QMainWindow):
         #     time.sleep(0.1)
     
     def sendPlayback(self,dataList):
-        # if self.is_open:
-        #     if len(dataList) == 7:
-        data = "playback,"+str(dataList[0])+","+str(dataList[1])+","+str(dataList[2])+","+str(dataList[3])+","+str(dataList[4])+","+str(dataList[5])+","+str(self.speed)+","+str(dataList[6])+",\r"
-        print("Send Playback Command :", str(data.encode()))
-            # self.serial.write(data.encode())
+        if self.is_open:
+            if len(dataList) > 0:
+                data = "playback,"+str(dataList[0])+","+str(dataList[1])+","+str(dataList[2])+","+str(dataList[3])+","+str(dataList[4])+","+str(dataList[5])+","+str(self.speed)+","+str(dataList[6])+",\r"
+                print("Send Playback Command :", str(data.encode()))
+                self.serial.write(data.encode())
         time.sleep(0.1)
 
 
@@ -314,45 +310,45 @@ class UI(QMainWindow):
         if self.is_open:
             line = str(self.serial.readline(self.serial.in_waiting).decode())
             line = line.split(",")
-            
-            if(line[0] == 'feedback' and line[len(line)] == '\r'):
-                self.X.setText(line[1])
-                self.Y.setText(line[2])
-                self.Z.setText(line[3])
-                self.J1.setText(line[4])
-                self.J2.setText(line[5])
-                self.J3.setText(line[6])
-                self.listPlayback[1] = line[1]
-                self.listPlayback[2] = line[2]
-                self.listPlayback[3] = line[3]
-                self.listPlayback[5] = line[4]
-                self.listPlayback[6] = line[5]
-                self.listPlayback[7] = line[6]
-                if(line[7]=='success'):
-                    print("<< success")
-                    nextStep = True
-        
-        if not clickStop and len(self.cuerrentData) >0:
-            # time.sleep(2.0)
-            if int(self.cuerrentData[len(self.cuerrentData)-1]) <= self.table.rowCount() and not self.lastRow:
-                if self.runPlaybackCount :
-                    print("send 1st row >>")
-                    self.sendPlayback(self.cuerrentData) #send First row in table 
-                    self.runPlaybackCount = False #enable run playback count
-                    self.updateData = False #enable update data 
-            
-                elif self.updateData : #when update data == True
-                    print("send next >>")
-                    self.sendPlayback(self.cuerrentData)
-                    self.updateData = False
-                elif int(self.cuerrentData[len(self.cuerrentData)-1]) >= self.table.rowCount():
-                    self.lastRow = True
-                    clickStop = True
-        elif nextStep:
-            self.clickPause()
-            nextStep = False
-                
+            if len(line) > 7 :
+                if(line[0] == 'feedback' and line[len(line)] == '\r'):
+                    self.X.setText(line[1])
+                    self.Y.setText(line[2])
+                    self.Z.setText(line[3])
+                    self.J1.setText(line[4])
+                    self.J2.setText(line[5])
+                    self.J3.setText(line[6])
+                    self.listPlayback[1] = line[1]
+                    self.listPlayback[2] = line[2]
+                    self.listPlayback[3] = line[3]
+                    self.listPlayback[5] = line[4]
+                    self.listPlayback[6] = line[5]
+                    self.listPlayback[7] = line[6]
+                    if(line[7]=='success'):
+                        print("<< success")
+                        nextStep = True
 
+        if self.countLoop < int(self.Loop) :
+            if not clickStop and len(self.cuerrentData) >0:
+                if int(self.cuerrentData[len(self.cuerrentData)-1]) <= rowCount and not self.lastRow:
+                    if self.runPlaybackCount :
+                        print("send 1st row >>")
+                        self.sendPlayback(self.cuerrentData) #send First row in table 
+                        self.runPlaybackCount = False #enable run playback count
+                        self.updateData = False #enable update data 
+                
+                    elif self.updateData : #when update data == True
+                        print("send next >>")
+                        self.sendPlayback(self.cuerrentData)
+                        self.updateData = False
+                    elif int(self.cuerrentData[len(self.cuerrentData)-1]) >= rowCount:
+                        self.lastRow = True
+                        clickStop = True
+            elif clickStop and len(self.cuerrentData) >0 and nextStep:
+                self.clickPause()
+                nextStep = False
+                self.countLoop +=1
+            
         if not(self.toggleconnect):
             self.listPort.clear()
             if sys.platform.startswith('win'):
