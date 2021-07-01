@@ -14,12 +14,32 @@ import time
 import glob
 
 clickStop = False
+nextStep = False
+# currentItemTable = []
 
+
+class RunPlayBackThread(QObject):
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)
+    def run(self):
+        global clickStop,nextStep
+        count = 0
+        while True:
+            if not clickStop:
+                if nextStep:
+                    self.progress.emit(count)
+                    count +=1
+                    nextStep = False
+            else:
+                break
+            time.sleep(0.1)
+        self.finished.emit()
+    pass
 
 class QLabel_alterada(QLabel):
-    
     clicked=pyqtSignal()
     released=pyqtSignal()
+
     def mousePressEvent(self, ev):
         self.clicked.emit()
     def mouseReleaseEvent(self, ev):
@@ -31,21 +51,21 @@ class UI(QMainWindow):
         super(UI, self).__init__()
         uic.loadUi("mainUI.ui", self)
 
+        self.runPlayback = False
+
         self.refresh = QTimer()
         self.refresh.setInterval(100)
         self.refresh.timeout.connect(self.update)
         self.refresh.start()
 
         # self.thread = QThread()
-        # self.worker = Worker()
-        # self.worker.moveToThread(self.thread)
-        # self.thread.started.connect(self.worker.run)
-        # self.worker.finished.connect(self.thread.quit)
+        # self.runPlayBackThread = RunPlayBackThread()
+        # self.runPlayBackThread.moveToThread(self.thread)
+        # self.thread.started.connect(self.runPlayBackThread.run)
+        # self.runPlayBackThread.progress.connect(self.reportProgress)
+        # self.runPlayBackThread.finished.connect(self.thread.quit)
         # self.worker.finished.connect(self.worker.deleteLater)
         # self.thread.finished.connect(self.thread.deleteLater)
-
-
-
 
         self.serial = None
         self.is_open = False
@@ -53,7 +73,11 @@ class UI(QMainWindow):
         self.listPort = self.findChild(QComboBox, 'port') # Find Portlist
         self.toggleconnect = True
         self.listPlayback = ["",0,0,0,0,0,0,0,0]
-        self.checkStep = False
+        self.cuerrentData = []
+        self.updateData = False
+        self.runPlaybackCount  = False 
+        self.lastRow = False
+
 
         if sys.platform.startswith('win'):
             ports = ['COM%s' % (i + 1) for i in range(256)]
@@ -114,7 +138,6 @@ class UI(QMainWindow):
         self.J2_Down.clicked.connect(partial(self.sendData,data = "J2-")) 
         self.J2_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
 
-
         self.J3_Up = self.findChild(QLabel, 'J3_Up') # Find the Image J+
         self.J3_Up.clicked.connect(partial(self.sendData,data = "J3+"))
         self.J3_Up.released.connect(partial(self.sendDataHome,data = "STOP")) 
@@ -122,7 +145,6 @@ class UI(QMainWindow):
         self.J3_Down = self.findChild(QLabel, 'J3_Down') # Find the Image J-
         self.J3_Down.clicked.connect(partial(self.sendData,data = "J3-")) 
         self.J3_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
-
 
         self.J4_Up = self.findChild(QLabel, 'J4_Up') # Find the Image J+
         self.J4_Up.clicked.connect(partial(self.sendData,data = "J4+")) 
@@ -156,7 +178,6 @@ class UI(QMainWindow):
         self.Z_Down.clicked.connect(partial(self.sendData,data = "Z-")) 
         self.Z_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
 
-
         self.R_Up = self.findChild(QLabel, 'R_Up') # Find the Image  R
         self.R_Up.clicked.connect(partial(self.sendData,data = "R+")) 
         self.R_Up.released.connect(partial(self.sendDataHome,data = "STOP")) 
@@ -165,20 +186,21 @@ class UI(QMainWindow):
         self.R_Down.clicked.connect(partial(self.sendData,data = "R-")) 
         self.R_Down.released.connect(partial(self.sendDataHome,data = "STOP")) 
 
-
-
         self.slider = self.findChild(QSlider, 'speed')
         self.slider.valueChanged.connect(self.value_changed)
 
         self.insertRow = self.findChild(QLabel, 'insertRow')
         self.insertRow.clicked.connect(self.insertTable)
 
+        self.deleteRow = self.findChild(QLabel, 'deleteRow')
+        self.deleteRow.clicked.connect(self.deleteRowLastTable)
+
+
         self.play = self.findChild(QLabel, 'play')
-        
-        # self.play.clicked.connect(self.clickRun) 
+        self.play.clicked.connect(self.clickRun) 
 
         self.pause = self.findChild(QLabel, 'pause')
-        # self.pause.clicked.connect(self.clickPause) 
+        self.pause.clicked.connect(self.clickPause) 
 
         self.deleteRow = self.findChild(QLabel, 'deleteRow')
 
@@ -199,72 +221,70 @@ class UI(QMainWindow):
         self.table = self.findChild(QTableWidget, 'tableWidget')
         # self.table.clear()
         self.table.setRowCount(0)
+        self.Emergency = self.findChild(QLabel, 'emer') # Find the Image  R
+        self.Emergency.clicked.connect(self.test)
+    
     def clickRun(self):
-        print("runTable")
-        self.thread.start()
+        if self.table.rowCount()>0:
+            global clickStop ,nextStep
+            print("runTable")
+            nextStep = True
+            clickStop = False
+            self.lastRow = False
+            self.thread = QThread()
+            self.runPlayBackThread = RunPlayBackThread()
+            self.runPlayBackThread.moveToThread(self.thread)
+            self.thread.started.connect(self.runPlayBackThread.run)
+            self.runPlayBackThread.progress.connect(self.reportProgress)
+            self.runPlayBackThread.finished.connect(self.thread.quit)
+            self.thread.start()
+            self.runPlaybackCount = True
+            self.play.setEnabled(False)
+        
+
     def clickPause(self):
+        global clickStop 
         print("pauseTable")
         self.thread.quit()
+        clickStop = True
+        self.play.setEnabled(True)
 
-    def runPlayback(self):
-        print("runPlayback")
-        rowCount = self.table.rowCount()
-        count = 0
-        while True:
-            if self.is_open:
-                line = str(self.serial.readline(self.serial.in_waiting).decode())
-                line = line.split(",")
-                if(line[0] == 'feedback' and line[-1] == '\r'):
-                    self.X.setText(line[1])
-                    self.Y.setText(line[2])
-                    self.Z.setText(line[3])
-                    self.J1.setText(line[4])
-                    self.J2.setText(line[5])
-                    self.J3.setText(line[6])
-                    self.listPlayback[1] = line[1]
-                    self.listPlayback[2] = line[2]
-                    self.listPlayback[3] = line[3]
-                    self.listPlayback[5] = line[4]
-                    self.listPlayback[6] = line[5]
-                    self.listPlayback[7] = line[6]
-                    if(line[7]=='success'):
-                        self.checkStep = True
-            if(rowCount >0):
-                # print(self.table.item(count,1).text(),self.table.item(count,2).text(),self.table.item(count,3).text(),self.table.item(count,4).text(),self.table.item(count,5).text(),self.table.item(count,6).text(),self.table.item(count,7).text(),self.table.item(count,8).text(),count+1)
-                if self.checkStep:
-                    data = [self.table.item(count,1).text(),self.table.item(count,2).text(),self.table.item(count,3).text(),self.table.item(count,5).text(),self.table.item(count,6).text(),self.table.item(count,7).text(),str(count+1)]
-                    self.sendPlayback(data)
-                    self.checkStep = False
-                    count += 1
-                if count == rowCount:
-                    break
-            time.sleep(0.5)
-
-    def pausePlayback(self):
-        print("pausePlayback")
-        pass
 
     def insertTable(self):
         rowCount = self.table.rowCount()
         self.table.insertRow(rowCount)
-        # self.listPlayback = [0,0,0,0,0,0,0,0]
         for i in range(len(self.listPlayback)):
             self.table.setItem(rowCount,i, QTableWidgetItem(str(self.listPlayback[i])))
 
-        pass
+    def deleteRowLastTable(self):
+        rowCount = self.table.rowCount()
+        self.table.removeRow(rowCount-1)
+
+
 
     def keyPressEvent(self, event):
         print("press")
-        # return super().keyPressEvent(a0)
+
     def value_changed(self):
         self.speed = self.slider.value()
+
+    def reportProgress(self,n):
+        if self.table.rowCount()>0 and n < self.table.rowCount():
+            self.cuerrentData = [self.table.item(n,1).text(),self.table.item(n,2).text(),self.table.item(n,3).text(),self.table.item(n,5).text(),self.table.item(n,6).text(),self.table.item(n,7).text(),str(n+1)]
+            print("[Report] self.cuerrentData :",self.cuerrentData)
+            self.updateData = True
+            time.sleep(0.1)
+        elif n == self.table.rowCount()+1:
+            self.lastRow = True
+
+        #     time.sleep(0.1)
     
     def sendPlayback(self,dataList):
-        if self.is_open:
-            if len(dataList) == 7:
-                data = "playback,"+str(dataList[0])+","+str(dataList[1])+","+str(dataList[2])+","+str(dataList[3])+","+str(dataList[4])+","+str(dataList[5])+","+str(self.speed)+","+str(dataList[6])+",\r"
-            print("Send Playback Command :", str(data.encode()))
-            self.serial.write(data.encode())
+        # if self.is_open:
+        #     if len(dataList) == 7:
+        data = "playback,"+str(dataList[0])+","+str(dataList[1])+","+str(dataList[2])+","+str(dataList[3])+","+str(dataList[4])+","+str(dataList[5])+","+str(self.speed)+","+str(dataList[6])+",\r"
+        print("Send Playback Command :", str(data.encode()))
+            # self.serial.write(data.encode())
         time.sleep(0.1)
 
 
@@ -283,13 +303,19 @@ class UI(QMainWindow):
         time.sleep(0.1)
 
     def test(self):
-        print("TEST")
+        global nextStep 
+        nextStep = True
+        print("<< success")
 
     def update(self):
+        global nextStep,clickStop
+        rowCount = self.table.rowCount()
+        nextStep = True
         if self.is_open:
             line = str(self.serial.readline(self.serial.in_waiting).decode())
             line = line.split(",")
-            if(line[0] == 'feedback' and line[-1] == '\r'):
+            
+            if(line[0] == 'feedback' and line[len(line)] == '\r'):
                 self.X.setText(line[1])
                 self.Y.setText(line[2])
                 self.Z.setText(line[3])
@@ -303,7 +329,28 @@ class UI(QMainWindow):
                 self.listPlayback[6] = line[5]
                 self.listPlayback[7] = line[6]
                 if(line[7]=='success'):
-                    self.checkStep = True
+                    print("<< success")
+                    nextStep = True
+        
+        if not clickStop and len(self.cuerrentData) >0:
+            # time.sleep(2.0)
+            if int(self.cuerrentData[len(self.cuerrentData)-1]) <= self.table.rowCount() and not self.lastRow:
+                if self.runPlaybackCount :
+                    print("send 1st row >>")
+                    self.sendPlayback(self.cuerrentData) #send First row in table 
+                    self.runPlaybackCount = False #enable run playback count
+                    self.updateData = False #enable update data 
+            
+                elif self.updateData : #when update data == True
+                    print("send next >>")
+                    self.sendPlayback(self.cuerrentData)
+                    self.updateData = False
+                elif int(self.cuerrentData[len(self.cuerrentData)-1]) >= self.table.rowCount():
+                    self.lastRow = True
+                    clickStop = True
+        elif nextStep:
+            self.clickPause()
+            nextStep = False
                 
 
         if not(self.toggleconnect):
@@ -337,7 +384,8 @@ class UI(QMainWindow):
             self.toggleconnect = False
             pixmap = QPixmap('./img/disconnect_template.png')
             self.btnConnect.setPixmap(pixmap)
-            self.listPort.currentText(str(self.listPort.currentText()))
+            str_port = str(self.listPort.currentText())
+            self.listPort.setCurrentText(str_port)
             self.listPort.setEnabled(False)
         else:
             self.serial.close()
