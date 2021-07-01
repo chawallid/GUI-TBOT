@@ -196,7 +196,7 @@ class UI(QMainWindow):
         self.play.clicked.connect(self.clickRun) 
 
         self.pause = self.findChild(QLabel, 'pause')
-        self.pause.clicked.connect(self.clickPause) 
+        self.pause.clicked.connect(partial(self.clickPause,playBtn = True)) 
 
         self.deleteRow = self.findChild(QLabel, 'deleteRow')
 
@@ -240,7 +240,7 @@ class UI(QMainWindow):
 
     def clickPause(self,playBtn):
         global clickStop 
-        print("pauseTable")
+        # print("pauseTable")
         self.thread.quit()
         clickStop = True
         if playBtn:
@@ -308,12 +308,12 @@ class UI(QMainWindow):
     def update(self):
         global nextStep,clickStop
         rowCount = self.table.rowCount()
-        nextStep = True
+        # nextStep = True
         if self.is_open:
             line = str(self.serial.readline(self.serial.in_waiting).decode())
             line = line.split(",")
             if len(line) > 7 :
-                if(line[0] == 'feedback' and line[len(line)] == '\r'):
+                if(line[0] == 'feedback'):
                     self.X.setText(line[1])
                     self.Y.setText(line[2])
                     self.Z.setText(line[3])
@@ -329,30 +329,34 @@ class UI(QMainWindow):
                     if(line[7]=='success'):
                         print("<< success")
                         nextStep = True
-                        
-        if self.countLoop < int(self.Loop) :
-            if not clickStop and len(self.cuerrentData) >0:
-                if int(self.cuerrentData[len(self.cuerrentData)-1]) <= rowCount and not self.lastRow:
-                    if self.runPlaybackCount :
-                        print("send 1st row >>")
-                        self.sendPlayback(self.cuerrentData) #send First row in table 
-                        self.runPlaybackCount = False #enable run playback count
-                        self.updateData = False #enable update data 
-                
-                    elif self.updateData : #when update data == True
-                        print("send next >>")
-                        self.sendPlayback(self.cuerrentData)
-                        self.updateData = False
-                    elif int(self.cuerrentData[len(self.cuerrentData)-1]) >= rowCount:
-                        self.lastRow = True
-                        clickStop = True
-            elif clickStop and len(self.cuerrentData) >0 and nextStep:
-                self.clickPause(False)
+        if self.Loop.text() != '':
+            if self.countLoop < int(self.Loop.text()) :
+                if not clickStop and len(self.cuerrentData) >0:
+                    if int(self.cuerrentData[len(self.cuerrentData)-1]) <= rowCount and not self.lastRow:
+                        if self.runPlaybackCount :
+                            print("send 1st row >>")
+                            self.sendPlayback(self.cuerrentData) #send First row in table 
+                            self.runPlaybackCount = False #enable run playback count
+                            self.updateData = False #enable update data 
+                    
+                        elif self.updateData : #when update data == True
+                            print("send next >>")
+                            self.sendPlayback(self.cuerrentData)
+                            self.updateData = False
+                        elif int(self.cuerrentData[len(self.cuerrentData)-1]) >= rowCount:
+                            self.lastRow = True
+                            clickStop = True
+                elif clickStop and len(self.cuerrentData) >0 and nextStep:
+                    print("last")
+                    self.clickPause(False)
+                    nextStep = False
+                    self.clickRun()
+                    self.countLoop +=1
+            else:
+                # print("out loop")
+                self.clickPause(True)
                 nextStep = False
-                self.countLoop +=1
-        else:
-            self.clickPause(True)
-            nextStep = False
+                self.countLoop  = 0
             
         if not(self.toggleconnect):
             self.listPort.clear()
