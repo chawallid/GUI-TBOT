@@ -238,13 +238,15 @@ class UI(QMainWindow):
             self.play.setEnabled(False)
         
 
-    def clickPause(self):
+    def clickPause(self,playBtn):
         global clickStop 
         print("pauseTable")
         self.thread.quit()
         clickStop = True
-        self.play.setEnabled(True)
-
+        if playBtn:
+            self.play.setEnabled(True)
+        else:
+            self.play.setEnabled(False)
 
     def insertTable(self):
         rowCount = self.table.rowCount()
@@ -345,9 +347,12 @@ class UI(QMainWindow):
                         self.lastRow = True
                         clickStop = True
             elif clickStop and len(self.cuerrentData) >0 and nextStep:
-                self.clickPause()
+                self.clickPause(False)
                 nextStep = False
                 self.countLoop +=1
+        else:
+            self.clickPause(True)
+            nextStep = False
             
         if not(self.toggleconnect):
             self.listPort.clear()
