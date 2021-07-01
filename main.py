@@ -329,7 +329,7 @@ class UI(QMainWindow):
                     if(line[7]=='success'):
                         print("<< success")
                         nextStep = True
-
+                        
         if self.countLoop < int(self.Loop) :
             if not clickStop and len(self.cuerrentData) >0:
                 if int(self.cuerrentData[len(self.cuerrentData)-1]) <= rowCount and not self.lastRow:
